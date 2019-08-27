@@ -412,6 +412,8 @@ int main() {
   branco = al_map_rgb(255,255,255);
   preto = al_map_rgb(0,0,0);
 
+  srand(time(NULL));
+
   // Loop do jogo
   int sair = 0;
   while(!sair) {

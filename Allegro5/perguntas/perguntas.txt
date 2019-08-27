@@ -1,29 +1,29 @@
 P: O Allegro5 e seus _______ precisam ser __________.
-52: Addons e inicializados.
+0: Addons e inicializados.
 1: Addons e inicializados.
 2: Addons e inicializados.
 3: Addons e inicializados.
 1
 P: O Allegro5 e seus _______ precisam ser __________.
-53: Addons e inicializados.
+0: Addons e inicializados.
 1: Addons e inicializados.
 2: Addons e inicializados.
 3: Addons e inicializados.
 1
 P: O Allegro5 e seus _______ precisam ser __________.
-5: Addons e inicializados.
+0: Addons e inicializados.
 1: Addons e inicializados. 
 2: Addons e inicializados.
 3: Addons e inicializados.
 0
 P: O Allegro5 e seus _______ precisam ser __________.
-4: Addons e inicializados.
+0: Addons e inicializados.
 1: Addons e inicializados. 
 2: Addons e inicializados.
 3: Addons e inicializados.
 0
 P: O Allegro5 e seus _______ precisam ser __________.
-4: Addons e inicializados.
+0: Addons e inicializados.
 1: Addons e inicializados. 
 2: Addons e inicializados.
 3: Addons e inicializados.
