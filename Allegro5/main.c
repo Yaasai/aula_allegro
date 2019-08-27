@@ -13,11 +13,11 @@
 #define MENU_SAIR 1
 #define JOGO 3
 #define NUMERO_PERGUNTAS 4
-#define MAXIMO_CARACTERES 100
+#define MAXIMO_CARACTERES 1000
 
 typedef struct {
   char pergunta[MAXIMO_CARACTERES];
-  char opcoes[MAXIMO_CARACTERES][4];
+  char opcoes[4][MAXIMO_CARACTERES];
   int resposta;
 } Pergunta;
 
@@ -120,7 +120,7 @@ int iniciar_fila_eventos() {
 }
 
 int iniciar_fonte() {
-  fonte = al_load_ttf_font("./perguntas/DK Lemon Yellow Sun.otf",16,0);
+  fonte = al_load_ttf_font("./perguntas/fonte.ttf",36,0);
   if(!fonte) {
     erro_iniciacao("Fonte");
     return 0;
@@ -134,17 +134,20 @@ Pergunta ler_pergunta(FILE *perguntas_txt) {
 
   char pergunta[MAXIMO_CARACTERES];
   fgets(pergunta, MAXIMO_CARACTERES, perguntas_txt); 
+  pergunta[strlen(pergunta)-2] = 0;
   strcpy(p.pergunta, pergunta);
 
   int i;
   for(i = 0; i < 4; i++) {
     char opcao[MAXIMO_CARACTERES];
     fgets(opcao, MAXIMO_CARACTERES, perguntas_txt); 
+    opcao[strlen(opcao)-2] = 0;
     strcpy(p.opcoes[i], opcao); 
   }  
   
   char resposta[MAXIMO_CARACTERES];
   fgets(resposta, MAXIMO_CARACTERES, perguntas_txt); 
+  resposta[strlen(resposta)-2] = 0;
   p.resposta = atoi(resposta); 
 
   return p;
@@ -216,7 +219,6 @@ void atualizar_imagem(char *imagem_atual) {
   }
 
   desenhar_imagem(imagem_atual,0,0);
-  al_flip_display();
 }
 
 void trocar_estado_menu() {
@@ -254,11 +256,26 @@ int pressionou_setas(ALLEGRO_EVENT evento) {
 }
 
 Pergunta escolher_pergunta_aleatoriamente() {
-  int pergunta = rand() % NUMERO_PERGUNTAS;  
-  return perguntas[pergunta];
+  int questao = rand() % NUMERO_PERGUNTAS;  
+  return perguntas[questao];
 }
 
 void desenhar_texto() {
+  ALLEGRO_COLOR preto = al_map_rgb(0,0,0);
+  ALLEGRO_COLOR vermelho = al_map_rgb(255,0,0);
+
+  float x = 330, y = 330;
+  al_draw_multiline_text(fonte,preto,x,200,820,36,ALLEGRO_ALIGN_LEFT,pergunta_selecionada.pergunta);
+
+  int i;
+  for( i = 0; i < 4; i++) {
+    y += 30;
+    if(i == resposta_selecionada) {
+      al_draw_text(fonte,vermelho,x,y,ALLEGRO_ALIGN_LEFT,pergunta_selecionada.opcoes[i]);
+      continue;
+    }
+    al_draw_text(fonte,preto,x,y,ALLEGRO_ALIGN_LEFT,pergunta_selecionada.opcoes[i]);
+  }
 
 }
 
@@ -289,6 +306,7 @@ void verificar_resposta(char *imagem_atual) {
   desenhar_imagem(imagem_atual,0,0);
   al_flip_display();
   al_rest(2.0);
+  al_flush_event_queue(fila_de_eventos);
 
 }
 
@@ -314,16 +332,18 @@ void atualizar_estado_jogo(ALLEGRO_EVENT evento, char *imagem_atual) {
       if(pressionou_setas(evento)) {
         trocar_estado_menu();
         atualizar_imagem(imagem_atual);
+        al_flip_display();
       } else if (pressionou_enter(evento) && estado_jogo == MENU_NOVO_JOGO) {
         iniciar_novo_jogo();
         atualizar_imagem(imagem_atual);
         desenhar_texto();
+        al_flip_display();
       }
     } else if(esta_em_jogo() && pressionou_enter(evento)) {
       verificar_resposta(imagem_atual);
       voltar_para_menu();
       atualizar_imagem(imagem_atual);
-      al_flush_event_queue(fila_de_eventos);
+      al_flip_display();
     }
   }
 }
@@ -354,6 +374,7 @@ int main() {
   }
   ler_perguntas("./perguntas/perguntas.txt");
   atualizar_imagem(imagem_atual);
+  al_flip_display();
   branco = al_map_rgb(255,255,255);
   preto = al_map_rgb(0,0,0);
 
