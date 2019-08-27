@@ -238,6 +238,14 @@ int esta_no_menu() {
   return 0;
 }
 
+int pressionou_seta_cima(ALLEGRO_EVENT evento) {
+  return evento.keyboard.keycode == ALLEGRO_KEY_UP;
+}
+
+int pressionou_seta_baixo(ALLEGRO_EVENT evento) {
+  return evento.keyboard.keycode == ALLEGRO_KEY_DOWN;
+}
+
 int pressionou_enter(ALLEGRO_EVENT evento) {
   return evento.keyboard.keycode == ALLEGRO_KEY_ENTER;
 }
@@ -310,6 +318,18 @@ void verificar_resposta(char *imagem_atual) {
 
 }
 
+void selecionar_resposta_baixo() {
+  if(++resposta_selecionada > 3) {
+    resposta_selecionada = 0;
+  }
+}
+
+void selecionar_resposta_cima() {
+  if(--resposta_selecionada < 0) {
+    resposta_selecionada = 3;
+  }
+}
+
 /**
  * Verifica se o jogador quer sair do jogo.
  * @Return 1 se o jogador quiser sair ou 0 se não. 
@@ -339,11 +359,25 @@ void atualizar_estado_jogo(ALLEGRO_EVENT evento, char *imagem_atual) {
         desenhar_texto();
         al_flip_display();
       }
-    } else if(esta_em_jogo() && pressionou_enter(evento)) {
-      verificar_resposta(imagem_atual);
-      voltar_para_menu();
-      atualizar_imagem(imagem_atual);
-      al_flip_display();
+    } else if(esta_em_jogo()) {
+      if(pressionou_enter(evento)) {
+        verificar_resposta(imagem_atual);
+        voltar_para_menu();
+        atualizar_imagem(imagem_atual);
+        al_flip_display();
+      }
+      else if(pressionou_seta_cima(evento)) {
+        selecionar_resposta_cima(); 
+        atualizar_imagem(imagem_atual);
+        desenhar_texto();
+        al_flip_display();
+      }
+      else if(pressionou_seta_baixo(evento)) {
+        selecionar_resposta_baixo();
+        atualizar_imagem(imagem_atual);
+        desenhar_texto();
+        al_flip_display(); 
+      }
     }
   }
 }
