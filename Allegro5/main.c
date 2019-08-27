@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_native_dialog.h>
@@ -11,16 +12,22 @@
 #define MENU_NOVO_JOGO 0
 #define MENU_SAIR 1
 #define JOGO 3
-
-static int estado_jogo = MENU_NOVO_JOGO;
-static ALLEGRO_DISPLAY *janela; 
-static ALLEGRO_EVENT_QUEUE *fila_de_eventos;
+#define NUMERO_PERGUNTAS 4
+#define MAXIMO_CARACTERES 100
 
 typedef struct {
-  char *pergunta;
-  char *a[4];
+  char pergunta[MAXIMO_CARACTERES];
+  char opcoes[MAXIMO_CARACTERES][4];
   int resposta;
 } Pergunta;
+
+static int estado_jogo = MENU_NOVO_JOGO;
+static int resposta_selecionada;
+static ALLEGRO_DISPLAY *janela; 
+static ALLEGRO_EVENT_QUEUE *fila_de_eventos;
+static ALLEGRO_FONT *fonte;
+static Pergunta perguntas[NUMERO_PERGUNTAS];
+static Pergunta pergunta_selecionada;
 
 /**
  * Função que simplesmente printa uma mensagem de 
@@ -49,6 +56,11 @@ int iniciar_modulos() {
 
   if(!al_init_image_addon()) {
     erro_iniciacao("Image addon");
+    return 0;
+  }
+
+  if(!al_init_font_addon()) {
+    erro_iniciacao("Font addon");
     return 0;
   }
 
@@ -107,6 +119,58 @@ int iniciar_fila_eventos() {
   return 1;
 }
 
+int iniciar_fonte() {
+  fonte = al_load_ttf_font("./perguntas/DK Lemon Yellow Sun.otf",16,0);
+  if(!fonte) {
+    erro_iniciacao("Fonte");
+    return 0;
+  }
+  return 1;
+}
+
+Pergunta ler_pergunta(FILE *perguntas_txt) {
+ 
+  Pergunta p;
+
+  char pergunta[MAXIMO_CARACTERES];
+  fgets(pergunta, MAXIMO_CARACTERES, perguntas_txt); 
+  strcpy(p.pergunta, pergunta);
+
+  int i;
+  for(i = 0; i < 4; i++) {
+    char opcao[MAXIMO_CARACTERES];
+    fgets(opcao, MAXIMO_CARACTERES, perguntas_txt); 
+    strcpy(p.opcoes[i], opcao); 
+  }  
+  
+  char resposta[MAXIMO_CARACTERES];
+  fgets(resposta, MAXIMO_CARACTERES, perguntas_txt); 
+  p.resposta = atoi(resposta); 
+
+  return p;
+  
+}
+
+int ler_perguntas(char *endereco) {
+
+  FILE *perguntas_txt = fopen(endereco, "r");
+  if(perguntas_txt == NULL) {
+    erro_iniciacao(endereco);
+    limpar_memoria(janela,fila_de_eventos);
+    return 0;
+  }
+
+  int questao = 0;
+  while ( questao < NUMERO_PERGUNTAS ) {
+     perguntas[questao] = ler_pergunta(perguntas_txt);
+     questao++;
+  }
+
+  fclose(perguntas_txt);
+  
+  return 1;
+}
+
 /**
  * Função que limpa a janela para determinada cor
  * @Param cor: cor para qual a janela vai ser limpada.
@@ -132,8 +196,6 @@ void desenhar_imagem(char *endereco, float x, float y) {
   al_draw_bitmap(imagem,x,y,0);
   al_destroy_bitmap(imagem);
 }
-
-
 
 void atualizar_imagem(char *imagem_atual) {
   // IMAGENS
@@ -191,8 +253,19 @@ int pressionou_setas(ALLEGRO_EVENT evento) {
   return 0;
 }
 
+Pergunta escolher_pergunta_aleatoriamente() {
+  int pergunta = rand() % NUMERO_PERGUNTAS;  
+  return perguntas[pergunta];
+}
+
+void desenhar_texto() {
+
+}
+
 void iniciar_novo_jogo() {
   estado_jogo = JOGO;
+  pergunta_selecionada = escolher_pergunta_aleatoriamente();
+  resposta_selecionada = 0;
 }
 
 void voltar_para_menu() {
@@ -200,7 +273,7 @@ void voltar_para_menu() {
 }
 
 int resposta_certa() {
-  return 1;
+  return resposta_selecionada == pergunta_selecionada.resposta;
 }
 
 void verificar_resposta(char *imagem_atual) {
@@ -240,15 +313,17 @@ void atualizar_estado_jogo(ALLEGRO_EVENT evento, char *imagem_atual) {
     if(esta_no_menu()) {
       if(pressionou_setas(evento)) {
         trocar_estado_menu();
+        atualizar_imagem(imagem_atual);
       } else if (pressionou_enter(evento) && estado_jogo == MENU_NOVO_JOGO) {
         iniciar_novo_jogo();
+        atualizar_imagem(imagem_atual);
+        desenhar_texto();
       }
-      atualizar_imagem(imagem_atual);
     } else if(esta_em_jogo() && pressionou_enter(evento)) {
       verificar_resposta(imagem_atual);
       voltar_para_menu();
       atualizar_imagem(imagem_atual);
-      al_rest(1.0);
+      al_flush_event_queue(fila_de_eventos);
     }
   }
 }
@@ -274,6 +349,10 @@ int main() {
   if(!iniciar_fila_eventos()) {
     return -1;
   }
+  if(!iniciar_fonte()) {
+    return -1;
+  }
+  ler_perguntas("./perguntas/perguntas.txt");
   atualizar_imagem(imagem_atual);
   branco = al_map_rgb(255,255,255);
   preto = al_map_rgb(0,0,0);
