@@ -111,7 +111,7 @@ int iniciar_fila_eventos() {
   fila_de_eventos= al_create_event_queue();
   if(!fila_de_eventos) {
     erro_iniciacao("Fila de eventos"); 
-    limpar_memoria(janela,fila_de_eventos);
+    limpar_memoria();
     return 0;
   }
   al_register_event_source(fila_de_eventos,al_get_keyboard_event_source());
@@ -159,7 +159,7 @@ int ler_perguntas(char *endereco) {
   FILE *perguntas_txt = fopen(endereco, "r");
   if(perguntas_txt == NULL) {
     erro_iniciacao(endereco);
-    limpar_memoria(janela,fila_de_eventos);
+    limpar_memoria();
     return 0;
   }
 
@@ -428,7 +428,7 @@ int main() {
 
   }
 
-  limpar_memoria(janela, fila_de_eventos);
+  limpar_memoria();
 
   return 0;  
 }
