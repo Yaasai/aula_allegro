@@ -1,31 +1,31 @@
 P: O Allegro5 e seus _______ precisam ser __________.
-0: Addons e inicializados.
+0: Sistemas e destruidos.
 1: Addons e inicializados.
-2: Addons e inicializados.
-3: Addons e inicializados.
+2: Tipos e chamados.
+3: Dados e criados.
 1
-P: O Allegro5 e seus _______ precisam ser __________.
-0: Addons e inicializados.
-1: Addons e inicializados.
-2: Addons e inicializados.
-3: Addons e inicializados.
-1
-P: O Allegro5 e seus _______ precisam ser __________.
-0: Addons e inicializados.
-1: Addons e inicializados. 
-2: Addons e inicializados.
-3: Addons e inicializados.
+P: Como se inicializa a biblioteca Allegro?
+0: al_initialize()
+1: al_install()
+2: al_start()
+3: al_init()
+3
+P: Qual e o tipo de dado de uma janela?
+0: ALLEGRO_DISPLAY
+1: ALLEGRO_WINDOW
+2: ALLEGRO_EVENT
+3: ALLEGRO_BITMAP
 0
-P: O Allegro5 e seus _______ precisam ser __________.
-0: Addons e inicializados.
-1: Addons e inicializados. 
-2: Addons e inicializados.
-3: Addons e inicializados.
-0
-P: O Allegro5 e seus _______ precisam ser __________.
-0: Addons e inicializados.
-1: Addons e inicializados. 
-2: Addons e inicializados.
-3: Addons e inicializados.
-0
+P: Qual e a funcao que atualiza a janela?
+0: al_init()
+1: al_init_image_addon()
+2: al_rest()
+3: al_flip_display()
+3
+P: O que sempre deve ser feito ao finalizar o jogo?
+0: Instanciar a janela e a fila de eventos do jogo.
+1: Voltar para o menu e atualizar a imagem atual.
+2: Destruir os modulos e atualizar o jogo.
+3: Destruir a janela e a fila de eventos do jogo.
+3
 
